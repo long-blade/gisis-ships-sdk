@@ -17,6 +17,7 @@ a number's format without any network call.
 - [Installation](#installation)
 - [Getting your session cookie](#getting-your-session-cookie)
 - [Quick start](#quick-start)
+- [Laravel](#laravel)
 - [Searching](#searching)
 - [The `Ship` model](#the-ship-model)
 - [Offline IMO validation](#offline-imo-validation)
@@ -25,6 +26,7 @@ a number's format without any network call.
 - [Development](#development)
 - [Legal & fair use](#legal--fair-use)
 - [Roadmap](#roadmap)
+- [Versioning](#versioning)
 - [License](#license)
 
 ---
@@ -126,6 +128,64 @@ $session = CookieSessionProvider::fromCookieHeader(
 php examples/lookup.php 9074729
 php examples/lookup.php --name "EVER GIVEN"
 ```
+
+---
+
+## Laravel
+
+The package ships a Laravel integration that is **auto-discovered** — no manual
+provider or alias registration needed.
+
+**1. Install**
+
+```bash
+composer require long-blade/gisis-ships-sdk
+```
+
+**2. Add the session cookie to your app's `.env`**
+
+```dotenv
+GISIS_IMOWEBACC=PASTE_THE_LONG_HEX_VALUE_HERE
+GISIS_ARRAFFINITY=
+GISIS_ASPNET_SESSIONID=
+```
+
+These map to `config/gisis.php`. To customise the config, publish it:
+
+```bash
+php artisan vendor:publish --tag=gisis-config
+```
+
+**3. Use it** — resolve from the container (constructor injection) …
+
+```php
+use Mavroforakis\Gisis\GisisShips;
+
+class VesselController
+{
+    public function show(GisisShips $gisis, string $imo)
+    {
+        return response()->json($gisis->findByImo($imo)?->toArray());
+    }
+}
+```
+
+… or via the `Gisis` facade:
+
+```php
+use Mavroforakis\Gisis\Laravel\Gisis;
+
+$ship    = Gisis::findByImo('9074729');
+$matches = Gisis::findByName('EVER GIVEN');
+```
+
+> The `GisisShips` binding is a lazy singleton: the cookie is only read when you
+> first resolve it, so a missing/expired cookie surfaces as an
+> `AuthenticationException` at call time (not at boot). Handle it and prompt for a
+> refreshed `GISIS_IMOWEBACC`.
+
+> ℹ️ Don't call `env()` directly in app code — these values come through
+> `config('gisis.*')`, which is safe under `php artisan config:cache`.
 
 ---
 
@@ -285,6 +345,24 @@ high-volume or commercial needs, use a dedicated maritime data provider.
       per-row postback already captured in `extra.detailPostbackArgument`.
 - [ ] Pagination for large result sets.
 - [ ] Optional response caching.
+
+---
+
+## Versioning
+
+This project follows [Semantic Versioning](https://semver.org/). While on the
+`0.x` line, minor versions may introduce changes; pin accordingly:
+
+```bash
+composer require long-blade/gisis-ships-sdk:^0.2
+```
+
+See [CHANGELOG.md](CHANGELOG.md) for the release history. New releases are cut by
+tagging:
+
+```bash
+git tag -a v0.3.0 -m "..." && git push origin v0.3.0
+```
 
 ---
 
