@@ -1,0 +1,32 @@
+{
+    "name": "long-blade/gisis-ships-sdk",
+    "description": "PHP SDK for searching the IMO GISIS public Ships database (IMO number / ship name lookups) over an authenticated browser session.",
+    "type": "library",
+    "license": "MIT",
+    "keywords": ["imo", "gisis", "ships", "vessel", "maritime", "sdk"],
+    "require": {
+        "php": ">=8.2",
+        "ext-json": "*",
+        "guzzlehttp/guzzle": "^7.8",
+        "symfony/dom-crawler": "^7.0",
+        "symfony/css-selector": "^7.0"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^11.0",
+        "vlucas/phpdotenv": "^5.6"
+    },
+    "autoload": {
+        "psr-4": {
+            "Mavroforakis\\Gisis\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Mavroforakis\\Gisis\\Tests\\": "tests/"
+        }
+    },
+    "config": {
+        "sort-packages": true
+    },
+    "minimum-stability": "stable"
+}

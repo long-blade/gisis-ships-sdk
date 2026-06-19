@@ -1,0 +1,7 @@
+/vendor/
+.env
+.phpunit.result.cache
+
+# Local capture/debug artifacts (may embed a live session) — never commit
+/ShipSearch.aspx
+*.curl
